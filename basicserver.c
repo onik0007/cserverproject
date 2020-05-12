@@ -1,6 +1,6 @@
 //620112010(Stefan Mitchell)
 //620117365(Claude Manning)
-//fill in id # here(Danielle Goulbourne)
+//620121402(Danielle Goulbourne)
 
 #include <stdio.h>
 #include <sys/types.h>	/* system type defintions */
@@ -83,7 +83,7 @@ else printf("Waiting for connection requests....\n");
                 printf("Which group which would you like to join?\n");
                 printf("Enter '1' for work or '2' for fun group\n");
                 scanf("%d",&grpchoice);
-                assign_group(grpchoice);
+                assign_group(grpchoice,sock_recv);
                     }
     
     else printf("Connection blocked\n");     
@@ -116,49 +116,50 @@ else printf("Waiting for connection requests....\n");
 
  }
 
-    void assign_group(int c){
+void assign_group(int c, int sock_r){
+  if (c==1){
+      printf("You are assigned to work group\n");
+      workchat(sock_r);
+  }
+  else if (c==2){
+       printf("You are assigned to fun group\n"); 
+       funchat(sock_r); 
+        }
+  }
 
-     if (c==1){
-
-         printf("You are assigned to work group\n");
-         workchat();
-                }
-
-
-      else if (c==2){
-
-         printf("You are assigned to fun group\n"); 
-        //funchat(); 
-          }
-        
-         }
-
-
-    void workchat(){
+void workchat(int sock_r){
     printf("You are in work group chat,send a message\n");
-    
-        
-
+     char buff[bufsize]; 
+     int q; 
+    // infinite loop for chat 
+    for (;;) { 
+        bzero(buff, bufsize); 
+        // read the message from client and copy it in buffer 
+        read(sock_r, buff, sizeof(buff)); 
+        // print buffer which contains the client contents 
+        printf("From %s received: %s\n",inet_ntoa(recvr_addr.sin_addr), bufsize);  
+        // if msg contains "Exit" then server exit and chat ended. 
+        if (strncmp("exit", buff, 4) == 0) { 
+            printf("Server Exit...\n"); 
+            break;
+        }
     }
 
     //create a file to track the chats in each group
 
-    
-
-
-
-
-     
-     void funchat(){
-
-
-
-
-     }
-
-
-
-
-
-
- 
+void funchat(int sockfd){
+    char buff[bufsize]; 
+    int q; 
+    // infinite loop for chat 
+    for (;;) { 
+        bzero(buff, bufsize); 
+        // read the message from client and copy it in buffer 
+        read(sock_r, buff, sizeof(buff)); 
+        // print buffer which contains the client contents 
+        printf("From %s received: %s\n",inet_ntoa(recvr_addr.sin_addr), bufsize);  
+        // if msg contains "Exit" then server exit and chat ended. 
+        if (strncmp("exit", buff, 4) == 0) { 
+            printf("Server Exit...\n"); 
+            break; 
+    }
+    }
